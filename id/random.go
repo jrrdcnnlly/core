@@ -26,7 +26,7 @@ func WithSize(size int) RandomGeneratorOption {
 	}
 }
 
-// Create a new RandomGenerator
+// Create a new RandomGenerator.
 func NewRandomGenerator(options ...RandomGeneratorOption) *RandomGenerator {
 	// Init default config.
 	cfg := &randomGeneratorConfig{
@@ -48,3 +48,6 @@ func (g *RandomGenerator) Next() string {
 	rand.Read(buffer) // Ignore returned values.
 	return base64.StdEncoding.EncodeToString(buffer)
 }
+
+// Default random generator.
+var Random *RandomGenerator = NewRandomGenerator()

@@ -1,83 +1,101 @@
 package id
 
 import (
-	"fmt"
+	"math"
 	"testing"
 )
 
+func TestNewSequentialGenerator(t *testing.T) {
+	type Test struct {
+		name        string
+		expectFirst uint64
+		expectLast  uint64
+	}
+
+	type TestBatch struct {
+		gen   *SequentialGenerator
+		tests []Test
+	}
+
+	batches := []TestBatch{
+		{
+			gen: NewSequentialGenerator(),
+			tests: []Test{
+				{".first should be 0, .last should be math.MaxUint64", 0, math.MaxUint64},
+			},
+		},
+		{
+			gen: NewSequentialGenerator(WithFirst(10), WithLast(20)),
+			tests: []Test{
+				{".first should be 10, .last should be 20", 10, 20},
+			},
+		},
+	}
+
+	for _, job := range batches {
+		for _, test := range job.tests {
+			t.Run(test.name, func(t *testing.T) {
+				first := job.gen.first
+				last := job.gen.last
+				if test.expectFirst != first {
+					t.Errorf("SequentialGenerator.first = %d; expected %d", first, test.expectFirst)
+				}
+				if test.expectLast != last {
+					t.Errorf("SequentialGenerator.last = %d; expected %d", last, test.expectLast)
+				}
+			})
+		}
+	}
+}
+
 func TestSequentialGenerator_Next(t *testing.T) {
+	type Test struct {
+		name   string
+		expect uint64
+	}
 
-	t.Run("NewSequentialGenerator()", func(t *testing.T) {
-		t.Parallel()
+	type TestBatch struct {
+		gen   *SequentialGenerator
+		tests []Test
+	}
 
-		var (
-			gen      *SequentialGenerator
-			result   uint64
-			expected uint64
-		)
+	batches := []TestBatch{
+		{
+			gen: NewSequentialGenerator(),
+			tests: []Test{
+				{"First call should be 0", 0},
+				{"Second call should be 1", 1},
+				{"Third call should be 2", 2},
+				{"Fourth call should be 3", 3},
+			},
+		},
+		{
+			gen: NewSequentialGenerator(WithFirst(10), WithLast(12)),
+			tests: []Test{
+				{"First call should be 10", 10},
+				{"Second call should be 11", 11},
+				{"Third call should be 12", 12},
+				{"Fourth call should be 130", 10},
+			},
+		},
+	}
 
-		gen = NewSequentialGenerator()
-
-		result = gen.Next()
-		expected = 0
-		if result != expected {
-			t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, expected)
+	for _, job := range batches {
+		for _, test := range job.tests {
+			t.Run(test.name, func(t *testing.T) {
+				result := job.gen.Next()
+				if test.expect != result {
+					t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, test.expect)
+				}
+			})
 		}
-
-		result = gen.Next()
-		expected = 1
-		if result != expected {
-			t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, expected)
-		}
-
-		result = gen.Next()
-		expected = 2
-		if result != expected {
-			t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, expected)
-		}
-	})
-
-	var (
-		first uint64 = 10
-		last  uint64 = 11
-	)
-
-	t.Run(fmt.Sprintf("NewSequentialGenerator(%d, %d)", first, last), func(t *testing.T) {
-		t.Parallel()
-
-		var (
-			gen      *SequentialGenerator
-			result   uint64
-			expected uint64
-		)
-
-		gen = NewSequentialGenerator(WithFirst(first), WithLast(last))
-
-		result = gen.Next()
-		expected = 10
-		if result != expected {
-			t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, expected)
-		}
-
-		result = gen.Next()
-		expected = 11
-		if result != expected {
-			t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, expected)
-		}
-
-		result = gen.Next()
-		expected = 10
-		if result != expected {
-			t.Errorf("SequentialGenerator.Next() = %d; expected %d", result, expected)
-		}
-	})
-
+	}
 }
 
 func BenchmarkSequentialGenerator_Next(b *testing.B) {
 	gen := NewSequentialGenerator()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		gen.Next()
 	}
 }

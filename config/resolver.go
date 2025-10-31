@@ -6,8 +6,10 @@ import (
 	"strconv"
 )
 
+// Defines a function type that resolves setting values.
 type Resolver[T any] func(s Setting[T]) Setting[T]
 
+// Specify a default setting value.
 func Fallback[T any](value T) Resolver[T] {
 	return func(s Setting[T]) Setting[T] {
 		if s.Set {
@@ -17,15 +19,17 @@ func Fallback[T any](value T) Resolver[T] {
 	}
 }
 
+// Panic if the setting value has not been set.
 func PanicIfUnset[T any]() Resolver[T] {
 	return func(s Setting[T]) Setting[T] {
 		if s.Set {
 			return s
 		}
-		panic("config value is not set")
+		panic("setting value is not set")
 	}
 }
 
+// Create a resolver that returns a boolean setting.
 func ConvBool(value fmt.Stringer) Resolver[bool] {
 	return func(s Setting[bool]) Setting[bool] {
 		if s.Set {
@@ -38,6 +42,7 @@ func ConvBool(value fmt.Stringer) Resolver[bool] {
 	}
 }
 
+// Create a resolver that returns a float setting.
 func ConvFloat32(value fmt.Stringer) Resolver[float32] {
 	return func(s Setting[float32]) Setting[float32] {
 		if s.Set {
@@ -50,6 +55,7 @@ func ConvFloat32(value fmt.Stringer) Resolver[float32] {
 	}
 }
 
+// Create a resolver that returns a float setting.
 func ConvFloat64(value fmt.Stringer) Resolver[float64] {
 	return func(s Setting[float64]) Setting[float64] {
 		if s.Set {
@@ -62,6 +68,7 @@ func ConvFloat64(value fmt.Stringer) Resolver[float64] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvInt(value fmt.Stringer) Resolver[int] {
 	return func(s Setting[int]) Setting[int] {
 		if s.Set {
@@ -74,6 +81,7 @@ func ConvInt(value fmt.Stringer) Resolver[int] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvInt8(value fmt.Stringer) Resolver[int8] {
 	return func(s Setting[int8]) Setting[int8] {
 		if s.Set {
@@ -86,6 +94,7 @@ func ConvInt8(value fmt.Stringer) Resolver[int8] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvInt16(value fmt.Stringer) Resolver[int16] {
 	return func(s Setting[int16]) Setting[int16] {
 		if s.Set {
@@ -98,6 +107,7 @@ func ConvInt16(value fmt.Stringer) Resolver[int16] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvInt32(value fmt.Stringer) Resolver[int32] {
 	return func(s Setting[int32]) Setting[int32] {
 		if s.Set {
@@ -110,6 +120,7 @@ func ConvInt32(value fmt.Stringer) Resolver[int32] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvInt64(value fmt.Stringer) Resolver[int64] {
 	return func(s Setting[int64]) Setting[int64] {
 		if s.Set {
@@ -122,6 +133,7 @@ func ConvInt64(value fmt.Stringer) Resolver[int64] {
 	}
 }
 
+// Create a resolver that returns a string setting.
 func ConvString(value fmt.Stringer, allowEmpty bool) Resolver[string] {
 	return func(s Setting[string]) Setting[string] {
 		if s.Set {
@@ -134,6 +146,7 @@ func ConvString(value fmt.Stringer, allowEmpty bool) Resolver[string] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvUint(value fmt.Stringer) Resolver[uint] {
 	return func(s Setting[uint]) Setting[uint] {
 		if s.Set {
@@ -146,6 +159,7 @@ func ConvUint(value fmt.Stringer) Resolver[uint] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvUint8(value fmt.Stringer) Resolver[uint8] {
 	return func(s Setting[uint8]) Setting[uint8] {
 		if s.Set {
@@ -158,6 +172,7 @@ func ConvUint8(value fmt.Stringer) Resolver[uint8] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvUint16(value fmt.Stringer) Resolver[uint16] {
 	return func(s Setting[uint16]) Setting[uint16] {
 		if s.Set {
@@ -170,6 +185,7 @@ func ConvUint16(value fmt.Stringer) Resolver[uint16] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvUint32(value fmt.Stringer) Resolver[uint32] {
 	return func(s Setting[uint32]) Setting[uint32] {
 		if s.Set {
@@ -182,6 +198,7 @@ func ConvUint32(value fmt.Stringer) Resolver[uint32] {
 	}
 }
 
+// Create a resolver that returns an integer setting.
 func ConvUint64(value fmt.Stringer) Resolver[uint64] {
 	return func(s Setting[uint64]) Setting[uint64] {
 		if s.Set {
@@ -194,6 +211,7 @@ func ConvUint64(value fmt.Stringer) Resolver[uint64] {
 	}
 }
 
+// Create a resolver that returns a URL setting.
 func ConvURL(value fmt.Stringer) Resolver[*url.URL] {
 	return func(s Setting[*url.URL]) Setting[*url.URL] {
 		if s.Set {

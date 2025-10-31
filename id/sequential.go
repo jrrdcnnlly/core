@@ -63,10 +63,10 @@ func (g *SequentialGenerator) Next() uint64 {
 
 	next := g.next
 
-	if g.next < math.MaxUint64 {
+	if g.next < g.last {
 		g.next++
 	} else {
-		g.next = 0
+		g.next = g.first
 	}
 
 	return next

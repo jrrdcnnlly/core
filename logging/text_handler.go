@@ -5,9 +5,17 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"os"
 	"strings"
 	"time"
 )
+
+type textHandlerConfig struct {
+	w     io.Writer
+	level slog.Level
+}
+
+type TextHandlerOption func(cfg *textHandlerConfig)
 
 type TextHandler struct {
 	level  slog.Level
@@ -16,11 +24,34 @@ type TextHandler struct {
 	writer io.Writer
 }
 
-func NewTextHandler(w io.Writer, level slog.Level) *TextHandler {
+func WithLevel(level slog.Level) TextHandlerOption {
+	return func(cfg *textHandlerConfig) {
+		cfg.level = level
+	}
+}
+
+func WithWriter(w io.Writer) TextHandlerOption {
+	return func(cfg *textHandlerConfig) {
+		cfg.w = w
+	}
+}
+
+// Create a new TextHandler.
+func NewTextHandler(options ...TextHandlerOption) *TextHandler {
+	// Init default config.
+	cfg := &textHandlerConfig{
+		w:     os.Stdout,
+		level: slog.LevelInfo,
+	}
+	// Apply options to config.
+	for _, option := range options {
+		option(cfg)
+	}
+	// Create new TextHandler.
 	return &TextHandler{
-		level:  level,
+		level:  cfg.level,
 		attrs:  make([]slog.Attr, 0),
-		writer: w,
+		writer: cfg.w,
 	}
 }
 

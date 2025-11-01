@@ -53,7 +53,7 @@ func Middleware(options ...MiddlewareOption) func(http.Handler) http.Handler {
 			// ResponseWriter wraps an http.ResponseWriter to capture the return status code.
 			rw := newResponseWriter(w)
 
-			// Pass the rquest scoped logger to the next handler in the request context.
+			// Pass the request scoped logger to the next handler in the request context.
 			next.ServeHTTP(rw, Request(r, logger))
 
 			// Calculate total request processing time.

@@ -8,12 +8,16 @@ import (
 	"github.com/jrrdcnnlly/core/id"
 )
 
+// Middleware configuration.
 type middlewareConfig struct {
 	logger *slog.Logger
 }
 
+// Middleware option.
 type MiddlewareOption func(*middlewareConfig)
 
+// Create a middleware from a specific logger.
+// Defaults to the default logger.
 func WithLogger(logger *slog.Logger) MiddlewareOption {
 	return func(cfg *middlewareConfig) {
 		cfg.logger = logger

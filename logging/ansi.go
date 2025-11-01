@@ -1,5 +1,6 @@
 package logging
 
+// ANSI code value for escape sequences.
 type ANSICode uint8
 
 const (

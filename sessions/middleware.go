@@ -1,4 +1,4 @@
-package session
+package sessions
 
 import (
 	"log/slog"
@@ -14,7 +14,7 @@ const sessionCookie string = "session_id"
 func Middleware[T any](store SessionStore[T]) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Get logger from context.
+			// Get logger from request context.
 			logger := logging.FromContextOrDefault(r.Context())
 
 			// Get or create session.

@@ -168,6 +168,20 @@ func ConvString(value fmt.Stringer, allowEmpty bool) Resolver[string] {
 	}
 }
 
+// Create a resolver that returns a string slice setting.
+func ConvStringSlice(value fmt.Stringer, sep string, allowEmpty bool) Resolver[[]string] {
+	return func(s Setting[[]string]) Setting[[]string] {
+		if s.Set {
+			return s
+		}
+		parsed := strings.Split(value.String(), sep)
+		if !allowEmpty && len(parsed) == 0 {
+			return s
+		}
+		return NewSetting(parsed)
+	}
+}
+
 // Create a resolver that returns an integer setting.
 func ConvUint(value fmt.Stringer) Resolver[uint] {
 	return func(s Setting[uint]) Setting[uint] {

@@ -10,6 +10,7 @@ import (
 // Session cookie name.
 const sessionCookie string = "session_id"
 
+// Create a session handling middleware backed by the specified store.
 func Middleware[T any](store SessionStore[T]) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

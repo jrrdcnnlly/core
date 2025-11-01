@@ -17,6 +17,7 @@ func NewSession[T any](id string) *Session[T] {
 	}
 }
 
+// Is the session expired?
 func (s *Session[T]) Expired() bool {
 	return s.expires.Before(time.Now())
 }

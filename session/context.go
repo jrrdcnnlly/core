@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// Used as a unique context key.
 type sessionKey struct{}
 
 // Retrieve a session from a context.

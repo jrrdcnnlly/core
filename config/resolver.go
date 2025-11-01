@@ -2,8 +2,10 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 // Defines a function type that resolves setting values.
@@ -128,6 +130,26 @@ func ConvInt64(value fmt.Stringer) Resolver[int64] {
 		}
 		if parsed, err := strconv.ParseInt(value.String(), 10, 64); err == nil {
 			return NewSetting(int64(parsed))
+		}
+		return s
+	}
+}
+
+// Create a resolver that returns a log level setting.
+func ConvLevel(value fmt.Stringer) Resolver[slog.Level] {
+	return func(s Setting[slog.Level]) Setting[slog.Level] {
+		if s.Set {
+			return s
+		}
+		switch strings.ToLower(value.String()) {
+		case "debug":
+			return NewSetting(slog.LevelDebug)
+		case "info":
+			return NewSetting(slog.LevelInfo)
+		case "warn":
+			return NewSetting(slog.LevelWarn)
+		case "error":
+			return NewSetting(slog.LevelError)
 		}
 		return s
 	}

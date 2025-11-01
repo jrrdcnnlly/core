@@ -37,6 +37,6 @@ func FromContextOrDefault(ctx context.Context) *slog.Logger {
 }
 
 // Create a new request with a new context that contains the specified logger.
-func withLogger(r *http.Request, logger *slog.Logger) *http.Request {
+func Request(r *http.Request, logger *slog.Logger) *http.Request {
 	return r.WithContext(context.WithValue(r.Context(), loggerKey{}, logger))
 }

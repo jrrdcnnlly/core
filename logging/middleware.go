@@ -54,7 +54,7 @@ func Middleware(options ...MiddlewareOption) func(http.Handler) http.Handler {
 			rw := newResponseWriter(w)
 
 			// Pass the rquest scoped logger to the next handler in the request context.
-			next.ServeHTTP(rw, withLogger(r, logger))
+			next.ServeHTTP(rw, Request(r, logger))
 
 			// Calculate total request processing time.
 			elapsed := time.Since(start)

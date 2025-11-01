@@ -23,6 +23,19 @@ func FromContext(ctx context.Context) (*slog.Logger, error) {
 	return nil, errors.New("no logger in context")
 }
 
+// Retrieve a logger from a context.
+// If no logger exists in the context return the default logger
+func FromContextOrDefault(ctx context.Context) *slog.Logger {
+	value := ctx.Value(loggerKey{})
+	if value == nil {
+		return slog.Default()
+	}
+	if logger, ok := value.(*slog.Logger); ok {
+		return logger
+	}
+	return slog.Default()
+}
+
 // Create a new request with a new context that contains the specified logger.
 func withLogger(r *http.Request, logger *slog.Logger) *http.Request {
 	return r.WithContext(context.WithValue(r.Context(), loggerKey{}, logger))

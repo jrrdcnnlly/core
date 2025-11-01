@@ -8,14 +8,35 @@ import (
 	"github.com/jrrdcnnlly/core/id"
 )
 
+type middlewareConfig struct {
+	logger *slog.Logger
+}
+
+type MiddlewareOption func(*middlewareConfig)
+
+func WithLogger(logger *slog.Logger) MiddlewareOption {
+	return func(cfg *middlewareConfig) {
+		cfg.logger = logger
+	}
+}
+
 // Create a new request logging middleware.
-func Middleware(logger *slog.Logger) func(http.Handler) http.Handler {
+func Middleware(options ...MiddlewareOption) func(http.Handler) http.Handler {
+	// Init default config.
+	cfg := &middlewareConfig{
+		logger: slog.Default(),
+	}
+	// Apply options to config.
+	for _, option := range options {
+		option(cfg)
+	}
+
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Record time of middleware entry to calculate processing duration.
 			start := time.Now()
 			// Create a new logger from the parent logger.
-			logger := logger.With(
+			logger := cfg.logger.With(
 				slog.Group(
 					"req",
 					slog.Uint64("id", id.Sequential.Next()),

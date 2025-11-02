@@ -9,12 +9,12 @@ import (
 type sessionKey struct{}
 
 // Retrieve a session from a context.
-func FromContext[T any](ctx context.Context) (*Session[T], error) {
+func FromContext(ctx context.Context) (*Session, error) {
 	value := ctx.Value(sessionKey{})
 	if value == nil {
 		return nil, errors.New("no session in context")
 	}
-	session, ok := value.(*Session[T])
+	session, ok := value.(*Session)
 	if !ok {
 		return nil, errors.New("invalid session in context")
 	}

@@ -4,20 +4,21 @@ import (
 	"time"
 )
 
-type Session[T any] struct {
-	id      string
-	expires time.Time
-	Data    T
+type Session struct {
+	id       string
+	Expires  time.Time
+	UserID   string
+	Username string
 }
 
 // Create a new empty session with the given iD.
-func NewSession[T any](id string) *Session[T] {
-	return &Session[T]{
+func NewSession(id string) *Session {
+	return &Session{
 		id: id,
 	}
 }
 
 // Is the session expired?
-func (s *Session[T]) Expired() bool {
-	return s.expires.Before(time.Now())
+func (s *Session) Expired() bool {
+	return s.Expires.Before(time.Now())
 }

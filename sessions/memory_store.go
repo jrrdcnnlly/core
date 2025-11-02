@@ -11,17 +11,17 @@ import (
 
 // Session store held entirely in memory.
 // Create with NewMemoryStore().
-type MemoryStore[T any] struct {
+type MemoryStore struct {
 	id       *id.RandomGenerator
-	sessions map[string]*Session[T]
+	sessions map[string]*Session
 	mutex    sync.Mutex
 }
 
 // Create a new MemoryStore.
-func NewMemoryStore[T any]() *MemoryStore[T] {
-	store := &MemoryStore[T]{
+func NewMemoryStore() *MemoryStore {
+	store := &MemoryStore{
 		id:       id.NewRandomGenerator(),
-		sessions: map[string]*Session[T]{},
+		sessions: map[string]*Session{},
 	}
 
 	// Every hour run cleanup to remove expired sessions.
@@ -36,17 +36,17 @@ func NewMemoryStore[T any]() *MemoryStore[T] {
 }
 
 // Create a new session in the store.
-func (s *MemoryStore[T]) Create() (*Session[T], error) {
+func (s *MemoryStore) Create() (*Session, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	session := NewSession[T](s.id.Next())
+	session := NewSession(s.id.Next())
 	s.sessions[session.id] = session
 	return session, nil
 }
 
 // Retrieve a session from the store.
-func (s *MemoryStore[T]) Read(id string) (*Session[T], error) {
+func (s *MemoryStore) Read(id string) (*Session, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -63,13 +63,13 @@ func (s *MemoryStore[T]) Read(id string) (*Session[T], error) {
 }
 
 // Update a session in the store.
-func (s *MemoryStore[T]) Update(session *Session[T]) error {
+func (s *MemoryStore) Update(session *Session) error {
 	// Pointers mean memory store sessions are always up to date.
 	return nil
 }
 
 // Delete a session from the store.
-func (s *MemoryStore[T]) Delete(id string) error {
+func (s *MemoryStore) Delete(id string) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -79,7 +79,7 @@ func (s *MemoryStore[T]) Delete(id string) error {
 
 // Extract session ID from request and return session.
 // If session does not exist create a new session.
-func (s *MemoryStore[T]) FromRequest(r *http.Request) (*Session[T], error) {
+func (s *MemoryStore) FromRequest(r *http.Request) (*Session, error) {
 	cookie, err := r.Cookie(sessionCookie)
 	if err == nil {
 		session, err := s.Read(cookie.Value)
@@ -95,7 +95,7 @@ func (s *MemoryStore[T]) FromRequest(r *http.Request) (*Session[T], error) {
 }
 
 // Delete expired sessions from the store.
-func (s *MemoryStore[T]) Cleanup() {
+func (s *MemoryStore) Cleanup() {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 

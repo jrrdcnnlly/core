@@ -3,10 +3,10 @@ package sessions
 import "net/http"
 
 // Define an interface for session caches.
-type SessionStore[T any] interface {
-	Create() (*Session[T], error)
-	Read(id string) (*Session[T], error)
-	Update(session *Session[T]) error
+type SessionStore interface {
+	Create() (*Session, error)
+	Read(id string) (*Session, error)
+	Update(session *Session) error
 	Delete(id string) error
-	FromRequest(r *http.Request) (*Session[T], error)
+	FromRequest(r *http.Request) (*Session, error)
 }
